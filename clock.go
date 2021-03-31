@@ -1,6 +1,10 @@
 package utils
 
-import "time"
+import (
+  "strconv"
+  "strings"
+  "time"
+)
 
 type Clock struct {
 	timeFormate string
@@ -95,7 +99,7 @@ func (cl *Clock)pow(x float64, n int) int {
 	if x == 0 {
 		return 0
 	}
-	result := calPow(x, n)
+	result := cl.calPow(x, n)
 	if n < 0 {
 		result = 1 / result
 	}
