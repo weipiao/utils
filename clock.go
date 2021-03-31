@@ -76,6 +76,54 @@ func  (cl *Clock)GetDateFromRange(startTime, endTime string) []string {
 	return date
 }
 
+func (cl *Clock)ParseByBitOrAfter(id int) string {
+	arr := []string{}
+	for i := 0; i < id; i++ {
+		tmp := cl.pow(2, i)
+		if id&tmp == tmp {
+			arr = append(arr, strconv.Itoa(tmp))
+		}
+	}
+
+	str := strings.Join(arr, ",")
+
+	return str
+}
+
+
+func (cl *Clock)pow(x float64, n int) int {
+	if x == 0 {
+		return 0
+	}
+	result := calPow(x, n)
+	if n < 0 {
+		result = 1 / result
+	}
+
+	return int(result)
+}
+
+func (cl *Clock)calPow(x float64, n int) float64 {
+	if n == 0 {
+		return 1
+	}
+	if n == 1 {
+		return x
+	}
+
+	//向右移动一位
+	result := cl.calPow(x, n>>1)
+	result *= result
+
+	//如果n是奇数
+	if n&1 == 1 {
+		result *= x
+	}
+
+	return result
+}
+
+
 func NewClock() *Clock{
    loc,_:=time.LoadLocation("Local")
    return &Clock{
