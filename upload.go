@@ -64,7 +64,7 @@ func (up *Upload) readFormFile(c *http.Request, key string) (string, []byte, err
 //上传文件到阿里云
 func (up *Upload) BatchUploadImageToAliyun(projectTag, filePath, name string, data []byte, options ...oss.Option) (string, error) {
 
-	client, err := oss.New(up.OssAdminBucket, up.OssAdminAccessKey, up.OssAdminSecret)
+	client, err := oss.New(up.OssAdminEndPoint, up.OssAdminAccessKey, up.OssAdminSecret)
 	if err != nil {
 		return "", err
 	}
