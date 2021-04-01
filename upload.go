@@ -25,14 +25,14 @@ type Upload struct {
 
 
 //批量上传文件
-func (up *Upload) UploadImages(projectTag, filePath string, c *http.Request, keys []string) (map[string]string, error) {
+func (up *Upload) UploadImages(projectTag, filePath string, c *http.Request, keys []string,ossUrl string) (map[string]string, error) {
 	tmp := make(map[string]string, 0)
 	for _, key := range keys {
 		name, data, err := up.readFormFile(c, key)
 		if err != nil {
 			return nil, err
 		}
-		downloadUrl, err := up.BatchUploadImageToAliyun(projectTag, filePath, name, data)
+		downloadUrl, err := up.BatchUploadImageToAliyun(projectTag, filePath, name, data,ossUrl)
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +62,7 @@ func (up *Upload) readFormFile(c *http.Request, key string) (string, []byte, err
 
 
 //上传文件到阿里云
-func (up *Upload) BatchUploadImageToAliyun(projectTag, filePath, name string, data []byte, options ...oss.Option) (string, error) {
+func (up *Upload) BatchUploadImageToAliyun(projectTag, filePath, name string, data []byte,ossUrl string, options ...oss.Option) (string, error) {
 
 	client, err := oss.New(up.OssAdminEndPoint, up.OssAdminAccessKey, up.OssAdminSecret)
 	if err != nil {
@@ -81,7 +81,11 @@ func (up *Upload) BatchUploadImageToAliyun(projectTag, filePath, name string, da
 		return "", err
 	}
 
-	return "/" + filePath, nil
+	if ossUrl == "" {
+		ossUrl = up.OssResourceUrl
+	}
+	
+	return ossUrl + "/" + filePath, nil
 }
 
 //格式化路径
@@ -96,11 +100,11 @@ func  (up *Upload) genPath(filePath string, name string) string {
 }
 
 func NewUpload(endPoint,bucket,accessKey,secret,resourceUrl string) *Upload {
-   return &Upload{
-	   OssAdminEndPoint:endPoint,
-	   OssAdminBucket:bucket,
-	   OssAdminAccessKey:accessKey,
-	   OssAdminSecret:secret,
-	   OssResourceUrl:resourceUrl,
-   }
+	return &Upload{
+		OssAdminEndPoint:endPoint,
+		OssAdminBucket:bucket,
+		OssAdminAccessKey:accessKey,
+		OssAdminSecret:secret,
+		OssResourceUrl:resourceUrl,
+	}
 }
