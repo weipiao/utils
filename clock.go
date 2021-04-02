@@ -1,9 +1,9 @@
 package utils
 
 import (
-  "strconv"
-  "strings"
-  "time"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Clock struct {
@@ -81,17 +81,24 @@ func  (cl *Clock)GetDateFromRange(startTime, endTime string) []string {
 }
 
 func (cl *Clock)ParseByBitOrAfter(id int) string {
-	arr := []string{}
+	var bitArr []string = cl.ParseByBitOrAfterArr(id)
+	if len(bitArr) == 0 {
+       return ""
+	}
+
+	return strings.Join(bitArr,",")
+}
+
+func (cl *Clock) ParseByBitOrAfterArr(id int) []string {
+	var arr []string= make([]string,0)
 	for i := 0; i < id; i++ {
 		tmp := cl.pow(2, i)
-		if id&tmp == tmp {
+		if id & tmp == tmp {
 			arr = append(arr, strconv.Itoa(tmp))
 		}
 	}
 
-	str := strings.Join(arr, ",")
-
-	return str
+	return arr
 }
 
 
@@ -129,9 +136,9 @@ func (cl *Clock)calPow(x float64, n int) float64 {
 
 
 func NewClock() *Clock{
-   loc,_:=time.LoadLocation("Local")
-   return &Clock{
-	  timeFormate:"2006-01-02 15:04:05",
-	  loc: loc,
-  }
+	loc,_:=time.LoadLocation("Local")
+	return &Clock{
+		timeFormate:"2006-01-02 15:04:05",
+		loc: loc,
+	}
 }
