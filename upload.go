@@ -41,6 +41,23 @@ func (up *Upload) UploadImages(projectTag, filePath string, c *http.Request, key
 	return tmp, nil
 }
 
+//单个上传
+func (up *Upload) UploadImagesOne(projectTag, filePath string, c *http.Request, keys string,ossUrl string) (string, error) {
+
+	    name, data, err := up.readFormFile(c, keys)
+		if err != nil {
+			if err == http.ErrMissingFile {
+				return "",nil
+			}
+			return "", err
+		}
+		downloadUrl, err := up.BatchUploadImageToAliyun(projectTag, filePath, name, data,ossUrl)
+		if err != nil {
+			return "", err
+		}
+		
+     return downloadUrl,nil
+}
 //读取form中的上传文件图片或者视频
 func (up *Upload) readFormFile(c *http.Request, key string) (string, []byte, error) {
 	_,formFile, err := c.FormFile(key)
